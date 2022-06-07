@@ -225,17 +225,8 @@ def save_posters():
         print(f"img {img} title {title} ")
 
 
-        import os
-        cwd = os.getcwd()
 
-
-
-        pic_path = cwd+"/static/images/posters"
-
-
-        print(pic_path)
-
-        new_path = "D:\\Storage\\Documents\\Python\\Flask\\TVSITE\\Project22\\static\\images\\posters"
+        new_path = "\\static\\images\\posters"
 
 
         r = requests.get(img)
@@ -244,7 +235,7 @@ def save_posters():
 
 
         # wb means write bytes
-        with open(pic_path+"/"+title+".jpg", "wb") as pic:
+        with open(new_path+"/"+title+".jpg", "wb") as pic:
             pic.write(r.content)
 
 
