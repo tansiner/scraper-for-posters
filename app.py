@@ -143,7 +143,9 @@ def tv():
 
     posters = []
 
-    pic_path = "static/images/posters"
+
+    cwd = os.getcwd()+"/static/images/posters"
+    pic_path = cwd
 
     files = os.listdir(pic_path)
     for file in files:
