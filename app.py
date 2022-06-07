@@ -227,7 +227,8 @@ def save_posters():
 
 
 
-        new_path = "\\static\\images\\posters"
+        cwd = os.getcwd()+"/static/images/posters"
+        pic_path = cwd
 
 
         r = requests.get(img)
@@ -236,7 +237,7 @@ def save_posters():
 
 
         # wb means write bytes
-        with open(new_path+"/"+title+".jpg", "wb") as pic:
+        with open(pic_path+"/"+title+".jpg", "wb") as pic:
             pic.write(r.content)
 
 
