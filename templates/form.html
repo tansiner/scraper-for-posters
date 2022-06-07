@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Form{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+<section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h2 class="fw-light">Add New Channel</h2>
+        <br>
+
+
+        <form action="/save" method="POST" enctype="multipart/form-data">
+          <div class="mb-3 row">
+            <label for="channel_name" class="col-sm-3 col-form-label">Channel Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="channel_name" value="" name="channel_name">
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label for="channel_source" class="col-sm-3 col-form-label">Channel Source</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="channel_source" value="" name="channel_source">
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label for="channel_name" class="col-sm-3 col-form-label">Logo</label>
+            <div class="col-sm-9">
+              <input class="form-control" class="form-control" type="file" id="logo" name="image">
+            </div>
+          </div>
+
+
+      <div class="row py-lg-5">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+
+      </form>
+
+      </div>
+    </div>
+  </section>
+
+
+
+{% endblock %}

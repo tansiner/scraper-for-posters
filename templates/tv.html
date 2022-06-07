@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block title %}Scrape Posters{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+
+    .important { color: #336699;
+    }
+
+    .card-body{
+        padding: 0;
+      }
+
+      .channel-row{
+
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+      }
+
+      .card-body li.program{
+        background: #800f2f;
+        padding-left: 10px;
+        padding-bottom: 15px;
+        padding-top: 5px;
+
+      }
+
+      .card-body li.now-playing{
+        background: #40916c;
+        padding-left: 10px;
+        padding-bottom: 15px;
+        padding-top: 5px;
+      }
+
+      .programs-header {
+        margin-bottom: 3px;
+      }
+
+      .card-body p{
+        margin-bottom: 0;
+
+      }
+
+      .card-body .start-time, .card-body .finish-time, .status{
+        font-size: 12px;
+        color: white;
+
+
+      }
+
+      .start-time, .finish-time{
+
+        font-weight: bold;
+
+      }
+
+      .span-group {
+        float: right;
+        margin-right: 10px;
+      }
+
+      .finish-time{
+        display: inline-block;
+        margin-left : "20px"
+      }
+
+
+       a{
+        text-decoration: none;
+        color: white;
+       }
+
+
+       ul#epg_ul li {
+          margin-top: 1px;
+      }
+
+
+
+       .channel-inactive, .channel-active{
+        height: 100px;
+        padding: 10;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+       }
+
+       .card-body {
+          background: "";
+          margin-top: -17px;
+          margin-bottom: 35px;
+          padding: "";
+      }
+
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+
+
+<p>{{ now }}</p>
+
+<div class="album py-5 bg-light">
+  <div class="container">
+
+
+
+
+
+    <h1>All Posters</h1>
+
+
+    <div class="row row-cols-3 row-cols-sm-2 row-cols-md-4 g-4 channels-row">
+
+
+
+      {% for prg in programs %}
+      <div class="col" style="margin-bottom:20px">
+        <div class="card shadow-sm">
+          <h5>{{ prg }}</h5>
+          <a href="javascript:void(0);" onclick="scrape_for_posters(this)" id="poster" data-toggle="modal" data-target="#posters_lightbox"><img class="bd-placeholder-img card-img-top"
+          src="static/images/posters/{{ prg }}.jpg" width="100%" height="225" xmlns="" role="img" aria-label="" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>{{ prg }}</a>
+
+
+        </div>
+
+      </div>
+      {% endfor %}
+      </div>
+
+
+
+    <p></p>
+    <p>---------------------------------------------------------------------</p>
+    <p></p>
+
+
+
+<!--
+    <div class="row row-cols-3 row-cols-sm-2 row-cols-md-4 g-4 channels-row">
+
+      {% set total_channels_len = 55 %}
+      {%for i in range(0, total_channels_len)%}
+
+      <div class="col">
+        <div class="card shadow-sm">
+          <h5>{{channels[i]['channel_name']}}</h5>
+          <a href="{{channels[i]['src']}}" target="_blank"><img class="bd-placeholder-img card-img-top"
+          src="static/images/logos/{{channels[i]['channel_logo']}}" width="100%" height="225" xmlns="" role="img" aria-label="" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img></a>
+
+
+          <ul style="margin-top:20px" class="epg-list">
+            {% for x in range(0, channels[i]['epg']|length) %}
+              <li class="channel-inactive">
+              <span class="start-time">{{ channels[i]['epg'][x]['start_time'] }}</span> - <span class="finish-time">{{channels[i]['epg'][x]['finish_time']}}</span>
+              <p>
+              <a data-trigger="hover" data-placement="top" data-toggle="popover" title="{{channels[i]['epg'][x]['program']}}" data-html="true" data-content="<img src='static/images/posters/{{channels[i]['epg'][x]['program']}}.jpg' width='200' />" href="https://www.kinopoisk.ru/index.php?kp_query={{channels[i]['epg'][x]['program']}}"  target="_blank">{{channels[i]['epg'][x]['program']}}</a><span class="watch_now"><a href="https://gidonline.io/film/{{channels[i]['epg'][x]['program']}}" target="_blank">Watch Now!</a></span></p>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      {% endfor %}
+
+   </div> -->
+
+
+  </div>
+
+
+
+</div>
+
+
+
+
+    <!-- Add Comment Modal -->
+<div class="modal fade" id="posters_lightbox" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Movies</h5>
+        <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group" id="poster-div">
+
+          </div>
+
+
+          <button type="submit" class="btn btn-primary" onclick="submit_message();">Submit</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  function save_img(pic,title,poster){
+
+
+
+
+
+
+
+    const xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+
+
+      if (xhr.readyState == 4 && xhr.status == 200) {
+      response = JSON.parse(xhr.response)
+
+
+
+    }
+
+
+
+  } // onready state change function
+
+    var title = title
+    var img = pic
+    xhr.open('POST',"{{ url_for('save_posters') }}")
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    // xhr.send("current_date="+current_date+"&q=Ajax Request")
+    xhr.send("img="+img+"&title="+title+"")
+
+    console.log(poster.src)
+
+    poster.src = img
+  }
+
+  function scrape_for_posters(e){
+
+    var poster_div = document.getElementById("poster-div")
+
+
+    poster_div.innerHTML=""
+
+    href = e
+    div = e.parentElement
+
+    img = e.firstChild
+
+
+    let poster = e.firstChild
+
+    response = ""
+
+
+    const xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+
+
+
+      if (xhr.readyState == 4 && xhr.status == 200) {
+      response = JSON.parse(xhr.response)
+
+
+
+
+      //img.setAttribute("src","static/images/posters/"+response+".jpg")
+
+
+      for(var i=0; i<response.length; i++){
+
+        img = document.createElement("img")
+        img.setAttribute("src", response[i]['img']);
+        title = response[i]['title']
+
+        let pic = response[i]['img']
+
+        img.addEventListener("click",function(){
+          save_img(pic,title,e.firstChild)
+        })
+
+
+        poster_div.append(img)
+
+      }
+
+
+
+
+    }
+
+
+
+  } // onready state change function
+
+    var title = e.innerText
+    title = title.replace('"','').replace(',', '').replace('!','').replace('?','').replace('"','');
+
+
+    s_title = e.getAttribute("href").split("/").pop()
+    xhr.open('POST',"{{ url_for('scrape_for_posters') }}")
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    // xhr.send("current_date="+current_date+"&q=Ajax Request")
+    xhr.send("q="+title+"")
+
+
+
+    }
+
+
+
+
+</script>
+
+
+
+
+
+{% endblock %}

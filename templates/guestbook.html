@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+
+    <div class="jumbotron jumbotron-">
+  <div class="container text-center">
+    <h1 class="display-4">Flask and SQLAlchemy</h1>
+    <p class="lead">This is a guestbook powered by Python web-application framework Flask, SQLAlchemy toolkit and css framework Bootstrap</p>
+    <button type="button" id="add" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add_comment">Add Comment</button>
+  </div>
+</div>
+
+<div class="container alerts" id="alerts"></div>
+
+
+<div class="container comments-section">
+
+      <div class="row">
+        <div class="col">
+          <div class="card text-white bg-dark mb-3">
+            <div class="card-body text-center">
+              <h5 class="card-title">All Comments</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    {% for comment in comments %}
+<div class="row">
+        <div class="col">
+    <div class="card mb-3">
+      <div class="card-header">{{ comment.username }} <span class="date">{{ comment.comment_date }}</span></div>
+      <div class="card-body text-secondary">
+        <h5 class="card-title">Comment : {{ comment.id }}</h5>
+        <p class="card-text">{{ comment.comment }}</p>
+      </div>
+
+
+      <div class="card-footer text-muted">
+        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#edit_comment_{{ comment.id }}">Edit</button>
+        <button type="button" class="btn btn-danger btn-sm" id="delete" value="{{ comment.id }}" onclick="delete_comment(event);">Delete</button>
+      </div>
+
+    </div></div>
+
+
+    <!-- Edit Comment Modal -->
+    <div class="modal fade" id="edit_comment_{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit your comment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      {{ comment.comment }}
+
+    </div>
+    </div>
+    </div>
+</div>
+
+
+    {% endfor %}
+
+    </div><!-- container ends here -->
+
+
+
+
+    <!-- Add Comment Modal -->
+<div class="modal fade" id="add_comment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Share your ideas with us!</h5>
+        <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="username">Name</label>
+            <input type="text" class="form-control" id="username" name="username" aria-describedby="username">
+          </div>
+          <div class="form-group">
+            <label for="comment">Your Comment</label>
+            <textarea name="comment" id="comment" rows="8" cols="62"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" onclick="submit_message();">Submit</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+{% block script %}
+
+
+<script type="text/javascript">
+
+
+    var row=""
+
+    var alerts_container = document.getElementsByClassName("alerts")[0]
+
+
+    var success_message=document.createElement("div")
+    var close_button=document.createElement("button")
+    success_message.classList.add("alert")
+    success_message.classList.add("alert-success")
+    success_message.classList.add("text-center")
+    success_message.innerText="Comment has been added succesfully"
+    close_button.setAttribute("id","close_button")
+    success_message.onclick=close_panel
+    close_button.innerText="Close"
+    //success_message.append(close_button)
+
+
+    var danger_message=document.createElement("div")
+    var close_button=document.createElement("button")
+    danger_message.classList.add("alert")
+    danger_message.classList.add("alert-danger")
+    danger_message.classList.add("text-center")
+    danger_message.innerText="Comment has been deleted succesfully"
+    close_button.setAttribute("id","close_button")
+    danger_message.onclick=close_panel
+    close_button.innerText="Close"
+    //danger_message.append(close_button)
+
+
+    function close_panel(){
+      console.log("success close button clicked")
+      //alerts_container.classList.add("fade")
+      alerts_container.firstElementChild.remove()
+  }
+
+
+    var comments_section=document.getElementsByClassName("comments-section")[0]
+
+
+  function submit_message() {
+
+
+      if(alerts_container.hasChildNodes()){
+        alerts_container.children[0].remove();
+      }
+
+      alerts_container.append(success_message)
+
+      setTimeout(function(){ success_message.classList.add("fade"); }, 3000);
+      setTimeout(function(){ alerts_container.children[0].remove(); }, 3300);
+      success_message.classList.remove("fade");
+
+      var username=document.getElementById("username").value
+      var comment=document.getElementById("comment").value
+
+      var xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+          console.log(xhr)
+
+          row=""
+
+          comments=JSON.parse(xhr.responseText)
+
+          row+="<div class='row'>"  // row
+          row+="<div class='col'>"  // col
+
+          row+="<div class='card mb-3'>" // card mb-3
+
+          row+="<div class='card-header'>" // card-header
+          row+=comments.username
+          row+="<span class='date'>" // span
+          row+=comments.comment_date
+          row+="</span>" // span
+          row+="</div>" // card-header
+
+          row+="<div class='card-body text-secondary'>" // card-body text-secondary
+          row+="<h5 class='card-title'>" // card-title
+          row+=comments.comment_id
+          row+="</h5>" // card-title
+          row+="<p class='card-text'>" // card-text
+          row+=comments.comment
+          row+="</p>" // card-text
+          row+="</div>" // card-body text-secondary
+
+          row+="<div class='card-footer text-muted'>" // card-footer text-muted
+          row+="<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target=''>" // button edit
+          row+="Edit"
+          row+="</button>" // button edit
+          row+="&nbsp;"
+
+          row+="<button type='button' class='btn btn-danger btn-sm' data-toggle='modal' value="+comments.comment_id+" data-target='' id='delete' onclick='delete_comment(event);'>" // button delete
+          row+="Delete"
+          row+="</button>" // button delete
+          row+="</div>" // card-footer text-muted
+
+
+          row+="</div>" // card mb-3
+          row+="</div>" // col
+          row+="</div>" // row
+          comments_section.innerHTML+=row
+
+
+        }
+      };
+
+
+        xhr.open('POST',"{{ url_for('add_comment') }}")
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        xhr.send("username="+username+"&comment="+comment+"")
+      }
+
+
+
+
+  function delete_comment(e){
+
+
+   if(alerts_container.hasChildNodes()){
+        alerts_container.children[0].remove();
+      }
+
+      alerts_container.append(danger_message)
+
+      setTimeout(function(){ danger_message.classList.add("fade"); }, 3000);
+      setTimeout(function(){ alerts_container.children[0].remove(); }, 3300);
+      danger_message.classList.remove("fade");
+
+
+    var comment_id=e.target.value
+    console.log("Delete"+comment_id)
+
+
+    var comments_section=document.getElementsByClassName("comments-section")[0]
+
+    e.target.parentElement.parentElement.remove()
+
+    var xhr = new XMLHttpRequest()
+
+    xhr.open('POST',"{{ url_for('delete_comment') }}")
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xhr.send("comment_id="+comment_id+"")
+
+  }
+
+
+
+
+
+
+</script>
+
+
+
+{% endblock %}
+
+
+
+{% endblock %}

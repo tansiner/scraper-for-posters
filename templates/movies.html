@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Movies{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 g-4">
+
+        {% for movie in movies %}
+
+        <div class="col">
+          <div class="card shadow-sm">
+            <a href="{{ movie.movies_src }}" target="_blank"><img class="bd-placeholder-img card-img-top" src="static/images/posters/{{ movie.movies_logo }}" width="100%" height="225" xmlns="" role="img" aria-label="" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Sci-Fi</title><rect width="100%" height="100%" fill="#55595c"/></img></a>
+
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-md btn-outline-primary">{{ movie.movies_name }}</button>
+                  <button type="button" class="btn btn-md btn-outline-primary"><a href="/delete/{{ movie.id }}">Delete</a></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      {% endfor %}
+
+  </div>
+
+{% endblock %}

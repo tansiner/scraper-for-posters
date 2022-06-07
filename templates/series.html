@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Series{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+
+{% for serie in series %}
+
+
+<!-- Edit Series Modal Content -->
+<div class="modal fade" id="edit_series{{serie.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 class="modal-title" id="exampleModalLabel">Edit Series</h5>
+       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+       </button>
+     </div>
+     <div class="modal-body" id="{{serie.id}}">
+
+       <!-- <form action="update_series" method="POST"> -->
+         <div class="form-group">
+           <label for="title">Title</label>
+           <input type="text" value="{{ serie.series_name }}" class="form-control" name="title" id="title"  aria-describedby="title">
+         </div>
+         <div class="form-group" id="modal-img">
+           <label for="logo">Logo</label>
+           <input type="text" value="{{ serie.series_logo }}" class="form-control" name="logo" id="logo">
+         </div>
+         <div class="form-group">
+           <label for="source">Source</label>
+           <input type="text" value="{{ serie.series_src }}" class="form-control" name="source" id="source">
+         </div>
+         <input type="hidden" name="serie_id" id="serie_id" value="{{ serie.id }}">
+     </div>
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       <button type="submit" class="btn btn-primary" onclick="update(this);">Save changes</button>
+     </div>
+   </div>
+ </div>
+</div>
+
+{% endfor %}
+
+
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 g-4">
+        {% for serie in series %}
+        <div class="col" id="{{serie.id}}">
+          <div class="card shadow-sm" id="custombox">
+            <h6>{{ serie.series_name }}</h6>
+            <a href="{{ serie.series_src }}" target="_blank"><img class="bd-placeholder-img card-img-top" src="static/images/posters/{{ serie.series_logo }}" width="100%" height="225" xmlns="" role="img" aria-label="" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Sci-Fi</title><rect width="100%" height="100%" fill="#55595c"/></a>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#edit_series{{serie.id}}">Edit</button>
+                  <button type="button" class="btn btn-md btn-outline-primary"><a href="/delete/{{ serie.id }}">Delete</a></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <ul>
+    <li>List 1</li>
+  </ul>
+
+
+
+  <script type="text/javascript">
+
+
+
+    function update(e) {
+
+        const serie_id = document.getElementById("serie_id").value
+        const title = document.getElementById("title").value
+
+        const source = document.getElementById("source").value
+
+        const modal_img = document.getElementById("modal-img")
+        const modal_img_input = modal_img.querySelector("input").value
+
+        const modal_content = e.parentElement.parentElement
+        const modal_body = modal_content.children[1]
+        const modal_body_id = modal_body.getAttribute("id")
+        // console.log(modal_body_id)
+
+
+        const s_img = e.parentElement.parentElement.children[1].children[1].querySelector("input").value
+        const s_title = e.parentElement.parentElement.children[1].children[0].querySelector("input").value
+        const s_src = e.parentElement.parentElement.children[1].children[2].querySelector("input").value
+
+        console.log(s_title)
+        const custombox = document.getElementById("custombox")
+        const custombox_img = custombox.querySelector("img")
+        const custombox_parent = document.getElementById("custombox").parentElement
+        // console.log(custombox_parent.getAttribute("id"))
+
+        row = custombox_parent.parentElement
+
+        for (let i = 0; i < row.children.length; i++) {
+
+          if(row.children[i].getAttribute("id") == modal_body_id){
+
+              // console.log(row.children[i].querySelector("img"))
+              row.children[i].querySelector("img").setAttribute("src", "static/images/posters/"+s_img+"")
+              row.children[i].querySelector("h6").innerText = s_title
+              row.children[i].querySelector("a").setAttribute("href", s_src)
+
+
+          }
+
+        }
+
+        const img = document.createElement("img")
+        t = "foo"
+        const xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log("xhr object has been created and connection is succesfull!")
+            console.log(xhr.responseText)
+          }
+        };
+
+          xhr.open('POST',"{{ url_for('update_series') }}")
+          xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+          xhr.send("logo="+s_img+"&title="+s_title+"&source="+s_src+"&serie_id="+modal_body_id+"&q=Hello Taner")
+        }
+
+
+  </script>
+
+
+{% endblock %}
