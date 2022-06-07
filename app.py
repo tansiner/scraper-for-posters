@@ -341,9 +341,5 @@ def scrape_for_posters():
 
 if __name__ == '__main__':
 
-    app.config['ENV'] = 'development'
-    app.config['DEBUG'] = False
-    app.config['TESTING'] = False
-
     app.run()
 
